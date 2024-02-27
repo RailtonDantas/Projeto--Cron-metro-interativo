@@ -8,13 +8,25 @@ const BtnResume = document.querySelector("#ResumeBtn")
 const Cont_Msg = document.querySelector("#Container_mensagens")
 const Cont_Cronometer = document.querySelector("#Container_cronometer")
 
-let horas = 0
-let minutos = 0
-let segundos = 0
+let horas = Number(localStorage.getItem("horas"))
+let minutos = Number(localStorage.getItem("minutos"))
+let segundos = Number(localStorage.getItem("segundos"))
 let interval
 let Paused = false
 let paragrafo = document.querySelector("#Container_mensagens p")
 paragrafo.style.display = "none"
+
+if(localStorage.length == 0){
+    TimerHora.textContent = "00"
+    TimerMinutes.textContent = "00"
+    TimerSeconds.textContent = "00"
+}
+else{
+TimerHora.textContent = FormatTime(localStorage.getItem("horas"))
+TimerMinutes.textContent = FormatTime(localStorage.getItem("minutos"))
+TimerSeconds.textContent = FormatTime(localStorage.getItem("segundos"))
+}
+
 
 
 BtnPlay.addEventListener("click", function(){
@@ -25,10 +37,10 @@ BtnPlay.addEventListener("click", function(){
     paragrafo.textContent = "Bons estudos, meu amor ❤️"
     setTimeout(function sumir_inicio(){
         Cont_Cronometer.style.height = "280px"
-       paragrafo.style.display = "none"
+        paragrafo.style.display = "none"
     },5000)
-
-   interval = setInterval(function(){
+    
+    interval = setInterval(function(){
         if(!Paused){
             segundos++
             if(segundos == 60){
@@ -39,26 +51,32 @@ BtnPlay.addEventListener("click", function(){
                     horas++
                 }
             }
+            if(horas == 4 && minutos < 1 && paragrafo.textContent != "Bora doutora, mais um plantão 👩‍⚕️" && segundos < 30){
+                paragrafo.style.display = "Block"
+                paragrafo.textContent = `4 horas já. Parabéns, minha futura médica`
+                Cont_Cronometer.style.height = "300px"
+                
+                let imagem2 = document.createElement("img")
+                
+                imagem2.setAttribute("src", "../imagens/relatorio-medico.png")
+                imagem2.style.cssText = "width:20px; height:20px; margin-left:5px;"
+    
+                paragrafo.appendChild(imagem2)
+            }
+            if(horas == 4 && minutos < 1 && segundos == 30){
+                paragrafo.style.display = "none"
+                Cont_Cronometer.style.height = "280px"
+            }
         }
-        if(horas == 4){
-            paragrafo.style.display = "Block"
-            paragrafo.textContent = `4 horas já. Parabéns, minha futura médica`
-            
-            let imagem2 = document.createElement("img")
-            
-            imagem2.setAttribute("src", "../imagens/relatorio-medico.png")
-            imagem2.style.cssText = "width:20px; height:20px; margin-left:5px;"
-
-            paragrafo.appendChild(imagem2)
-        }
-        if(horas == 4 && minutos >= 1){
-            paragrafo.style.display = "none"
-        }
+        localStorage.setItem("horas",horas)
+        localStorage.setItem("minutos",minutos)
+        localStorage.setItem("segundos",segundos)
 
         TimerHora.textContent = FormatTime(horas)
         TimerMinutes.textContent =FormatTime(minutos)
         TimerSeconds.textContent = FormatTime(segundos)
     },1000)
+
 
 
 })
@@ -67,14 +85,20 @@ function FormatTime(time){
 }
 
 BtnPause.addEventListener("click", function(){
+    Paused = true
       Cont_Cronometer.style.height = "300px"
-
-      Paused = true
       BtnResume.style.display = "block"
       BtnReset.style.display = "block"
       BtnPause.style.display = "none"
       paragrafo.style.display = "block"
-      paragrafo.textContent = "Descansa um pouco, amor"
+
+    if(horas >= 4){
+        paragrafo.textContent = "Descansa um pouco, Dra Fernanda 👩‍⚕️"
+    }
+    else{
+        paragrafo.textContent = "Descansa um pouco, amor"
+    }
+
 })
 
 BtnResume.addEventListener("click",function(){
@@ -85,14 +109,19 @@ BtnResume.addEventListener("click",function(){
     BtnReset.style.display = "none"
     BtnPause.style.display = "block"
     paragrafo.style.display = "block"
-    paragrafo.textContent = "Continua estudando, amor. Você tá indo bem ❤️ "
+    
+    if(horas >= 4){
+        paragrafo.textContent = "Bora doutora, mais um plantão 👩‍⚕️"
+    }
+    else{
+        paragrafo.textContent = "Continua estudando, amor. Você tá indo bem ❤️ "
+    }
     
     setTimeout(function sumir_resume(){
         Cont_Cronometer.style.height = "280px"
         paragrafo.style.display = "none"
     },5000)
 })
-
 BtnReset.addEventListener("click", function(){
     Cont_Cronometer.style.height = "280px"
 
@@ -113,13 +142,20 @@ BtnReset.addEventListener("click", function(){
     paragrafo.style.display = "none"
     
     clearInterval(interval)
+    localStorage.clear()
 })
 
 BtnReset.addEventListener("mouseenter", function(){
-    Cont_Cronometer.style.height = "320px"
-
+    
     paragrafo.style.display = "block"
-    paragrafo.innerHTML = `Antes de vc parar, saiba que você se dedicou muito hoje <br> eu estou muito orgulhoso de você, meu amor, te amo ❤️`
+    if(horas < 4){
+        Cont_Cronometer.style.height = "320px"
+        paragrafo.innerHTML = `Antes de vc parar, saiba que você se dedicou muito hoje <br> eu estou muito orgulhoso de você, meu amor, te amo ❤️`}
+        else{
+        paragrafo.textContent = "Mais um plantão concluído. Parabéns, Dra Fernanda 👩‍⚕️"
+        Cont_Cronometer.style.height = "300px"
+
+    }
 })
 
 
