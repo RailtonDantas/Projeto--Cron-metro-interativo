@@ -8,6 +8,8 @@ const BtnResume = document.querySelector("#ResumeBtn")
 const Cont_Msg = document.querySelector("#Container_mensagens")
 const Cont_Cronometer = document.querySelector("#Container_cronometer")
 
+document.body.classList = localStorage.getItem("classe")
+
 let horas = Number(localStorage.getItem("horas"))
 let minutos = Number(localStorage.getItem("minutos"))
 let segundos = Number(localStorage.getItem("segundos"))
@@ -16,18 +18,16 @@ let Paused = false
 let paragrafo = document.querySelector("#Container_mensagens p")
 paragrafo.style.display = "none"
 
-if(localStorage.length == 0){
+if(localStorage.length == 1 || localStorage.length == 0){
     TimerHora.textContent = "00"
     TimerMinutes.textContent = "00"
     TimerSeconds.textContent = "00"
 }
 else{
-TimerHora.textContent = FormatTime(localStorage.getItem("horas"))
-TimerMinutes.textContent = FormatTime(localStorage.getItem("minutos"))
-TimerSeconds.textContent = FormatTime(localStorage.getItem("segundos"))
+    TimerHora.textContent = FormatTime(localStorage.getItem("horas"))
+    TimerMinutes.textContent = FormatTime(localStorage.getItem("minutos"))
+    TimerSeconds.textContent = FormatTime(localStorage.getItem("segundos"))
 }
-
-
 
 BtnPlay.addEventListener("click", function(){
     Cont_Cronometer.style.height = "300px"
@@ -142,7 +142,9 @@ BtnReset.addEventListener("click", function(){
     paragrafo.style.display = "none"
     
     clearInterval(interval)
-    localStorage.clear()
+    localStorage.removeItem("horas")
+    localStorage.removeItem("minutos")
+    localStorage.removeItem("segundos")
 })
 
 BtnReset.addEventListener("mouseenter", function(){
@@ -184,10 +186,12 @@ menu_estilos.addEventListener("mouseenter", function(){
 // inicio do tema de medicina
 opt_style[0].addEventListener("click", function(){
     document.body.removeAttribute("class")
+    localStorage.removeItem("classe")
 })
 // ABAIXO DISSO É ÁREA MED
 opt_style[1].addEventListener("click", function Ativar_Med(){
        document.body.classList = "med"
+       localStorage.setItem("classe", "med")
 })
 
 // ACIMA DISSO É ÁREA MED
@@ -195,12 +199,14 @@ opt_style[1].addEventListener("click", function Ativar_Med(){
 // ABAIXO É A ÁREA DE NATUREZAS
 opt_style[2].addEventListener("click", function Ativar_naturezas(){
     document.body.classList = "nat"
+    localStorage.setItem("classe", "nat")
 })
 
 // ACIMA É A ÁREA DE NATUREZAS
 
 opt_style[3].addEventListener("click", function Arivar_math(){
     document.body.classList = "mat"
+    localStorage.setItem("classe","mat")
 })
 
 
